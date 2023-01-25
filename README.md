@@ -6,4 +6,4 @@ This simple Java application facilitates the use of a keyboard to toggle Tuya sm
 * **(windows)** For launch on system startup, press `Win + R`, then type `shell:startup`. After pressing enter, a folder should open. Drop a shortcut of the JAR file into here.
 
 **Note:** This is a project that I created in about 3 days as a personal utility. This is not meant to be a showcase nor is it likely that it is bug-free.  
-Tested on Windows 10.
+Tested on Windows 10 and Arch Linux (KDE Plasma).
