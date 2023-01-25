@@ -1,7 +1,7 @@
-package mil.tsh.util;
+package mil.tph.util;
 
-import mil.tsh.types.Switch;
-import mil.tsh.types.Token;
+import mil.tph.types.Plug;
+import mil.tph.types.Token;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -48,7 +48,7 @@ public class APIUtil {
 		return null;
 	}
 
-	public static List<Switch> getDevices(Token token) {
+	public static List<Plug> getDevices(Token token) {
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
 			HttpPost post = new HttpPost(TUYA_URL + "skill");
 
@@ -73,12 +73,12 @@ public class APIUtil {
 				return null;
 			}
 
-			List<Switch> devices = new ArrayList<>();
+			List<Plug> devices = new ArrayList<>();
 
 			response.forEach(o -> {
 				JSONObject obj = (JSONObject) o;
 				if (obj.getString("dev_type").equalsIgnoreCase("switch")) { // Check if device is switch
-					devices.add(new Switch(obj.getString("id"), obj.getString("name"), obj.getJSONObject("data").getBoolean("state")));
+					devices.add(new Plug(obj.getString("id"), obj.getString("name"), obj.getJSONObject("data").getBoolean("state")));
 				}
 			});
 
@@ -90,7 +90,7 @@ public class APIUtil {
 		return null;
 	}
 
-	public static void setState(Token token, Switch device, boolean newState) {
+	public static void setState(Token token, Plug device, boolean newState) {
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
 			HttpPost post = new HttpPost(TUYA_URL + "skill");
 

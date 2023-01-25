@@ -1,12 +1,12 @@
-package mil.tsh.util;
+package mil.tph.util;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeInputEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-import mil.tsh.Application;
-import mil.tsh.types.Hotkey;
-import mil.tsh.types.Modifier;
+import mil.tph.Application;
+import mil.tph.types.Hotkey;
+import mil.tph.types.Modifier;
 
 import java.io.*;
 import java.util.*;
@@ -62,18 +62,16 @@ public class HotkeyUtil implements NativeKeyListener {
 
 	@Override
 	public void nativeKeyPressed(NativeKeyEvent e) {
-
-		if(!Application.isLoggedIn()) return;
+		if (!Application.isLoggedIn()) return;
 
 		if (_currentlyEditedHotkey == null) { // If user is not editing a hotkey, check if it can be performed
-			if (e.isActionKey()) return;
+			if (Modifier.isModifier(e.getKeyCode())) return;
 			getHotkey(e.getKeyCode(), getModifiers(e.getModifiers()).toArray(Modifier[]::new)).forEach(Hotkey::perform);
 			return;
 		}
 
-		if (e.isActionKey()) {
+		if (Modifier.isModifier(e.getKeyCode())) { // Custom function instead of e.isActionKey() since some "action keys" aren't modifiers (e.g. F1-24)
 			Set<Modifier> pressedModifiers = getModifiers(e.getModifiers());
-
 			if (_currentlyEditedHotkey.getModifiers().equals(pressedModifiers)) {
 				return; // check if duplicate as to not call frame.refresh(); unnecessarily (through hotkey#setModifiers)
 			}
@@ -96,7 +94,7 @@ public class HotkeyUtil implements NativeKeyListener {
 	public void nativeKeyReleased(NativeKeyEvent e) {
 		if (_currentlyEditedHotkey == null) return;
 
-		if (e.isActionKey()) {
+		if (Modifier.isModifier(e.getKeyCode())) {
 			Set<Modifier> modifiers = _currentlyEditedHotkey.getModifiers();
 			modifiers.remove( // Have to do this manually instead of through getModifiers(int) since e.getModifiers() doesn't seem to function.
 					switch (e.getKeyCode()) {

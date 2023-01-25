@@ -1,10 +1,10 @@
-package mil.tsh.gui;
+package mil.tph.gui;
 
-import mil.tsh.Application;
-import mil.tsh.types.Hotkey;
-import mil.tsh.types.Switch;
-import mil.tsh.types.Token;
-import mil.tsh.util.APIUtil;
+import mil.tph.Application;
+import mil.tph.types.Hotkey;
+import mil.tph.types.Plug;
+import mil.tph.types.Token;
+import mil.tph.util.APIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,11 +15,11 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class TSHFrame extends JFrame {
+public class TPHFrame extends JFrame {
 
 	private int _scrollbarProgress = 0; // save so that it doesn't reset on refresh();
 
-	public TSHFrame() {
+	public TPHFrame() {
 		setEnabled(true);
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
@@ -27,7 +27,7 @@ public class TSHFrame extends JFrame {
 		if (SystemTray.isSupported()) {
 			setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-			TrayIcon icon = new TrayIcon(getIconImage(), "TSH");
+			TrayIcon icon = new TrayIcon(getIconImage(), "TPH");
 			PopupMenu menuPopup = new PopupMenu();
 
 			MenuItem showI = new MenuItem("show");
@@ -49,20 +49,19 @@ public class TSHFrame extends JFrame {
 
 		}
 
-		setTitle("Tuya Switch Hotkeys");
+		setTitle("Tuya Plug Hotkeys");
 		setSize(600, 700);
 
 		refresh();
 
 		setResizable(false);
-		setVisible(true);
+		setVisible(!Application.getPreferences().doesStartInTray());
 
 		this.setLocationRelativeTo(null);
 	}
 
 	// TODO Performance could be improved by using a different model that doesn't require refreshing the whole frame for every change.
-	// TODO ^ Perhaps split up into a couple different refresh classes, each for a different component/list of components.
-
+	// TODO ^ Perhaps split up into a couple different refresh methods, each for a different component/list of components.
 	/**
 	 * Refreshes the GUI. This brings all elements, such as the state of a device, up to date visually.
 	 */
@@ -182,7 +181,7 @@ public class TSHFrame extends JFrame {
 					});
 
 					c.gridx = 2;
-					JComboBox<String> comboDeviceSelect = new JComboBox<>(Application.getDeviceUtil().getKnownDevices().stream().map(Switch::getName).toArray(String[]::new)); // TODO performance
+					JComboBox<String> comboDeviceSelect = new JComboBox<>(Application.getDeviceUtil().getKnownDevices().stream().map(Plug::getName).toArray(String[]::new)); // TODO performance
 					comboDeviceSelect.setSelectedItem(hotkey.getDevice().getName());
 					comboDeviceSelect.addItemListener((e) -> {
 						if (e.getStateChange() == ItemEvent.SELECTED) {// Avoid firing twice (ItemEvent.DESELECTED also gets called)
@@ -237,7 +236,12 @@ public class TSHFrame extends JFrame {
 			JPanel panelEast = new JPanel(new GridBagLayout());
 			GridBagConstraints c = new GridBagConstraints();
 			c.ipadx = 60;
-			c.insets = new Insets(0, 15, 0, 0);
+			c.insets = new Insets(0, 10, 0, 0);
+
+			JCheckBox boxStartInTray = new JCheckBox("Start in Tray");
+			boxStartInTray.setSelected(Application.getPreferences().doesStartInTray());
+			boxStartInTray.addActionListener(e -> Application.getPreferences().setStartInTray(!Application.getPreferences().doesStartInTray()));
+			panelEast.add(boxStartInTray, c);
 
 			JButton bClearHotkeys = new JButton("Clear");
 			bClearHotkeys.addActionListener(e -> Application.getHotkeyUtil().clearHotkeys());
@@ -247,8 +251,6 @@ public class TSHFrame extends JFrame {
 			JButton bLogOut = new JButton("Logout");
 			bLogOut.addActionListener(e -> Application.logout());
 			panelEast.add(bLogOut, c);
-
-			// TODO add option to start minimized
 
 			panelMain.add(panelEast, BorderLayout.EAST);
 

@@ -1,22 +1,32 @@
-package mil.tsh;
+package mil.tph;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
-import mil.tsh.gui.TSHFrame;
-import mil.tsh.types.Token;
-import mil.tsh.util.DeviceUtil;
-import mil.tsh.util.HotkeyUtil;
+import mil.tph.gui.TPHFrame;
+import mil.tph.types.Token;
+import mil.tph.util.DeviceUtil;
+import mil.tph.util.HotkeyUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
+import java.io.File;
 import java.io.IOException;
 
 public class Application {
 
+	private static Preferences _preferences;
 	private static DeviceUtil _deviceUtil = null;
 	private static HotkeyUtil _hotkeyUtil = null;
 	private static boolean _isLoggedIn = false;
-	private static TSHFrame _frame;
+	private static TPHFrame _frame;
+
+	static {
+		new File(System.getProperty("user.dir") + "/data/").mkdirs();
+	}
+
+	public static Preferences getPreferences() {
+		return _preferences;
+	}
 
 	public static DeviceUtil getDeviceUtil() {
 		return _deviceUtil;
@@ -36,12 +46,14 @@ public class Application {
 		initDeviceUtil();
 	}
 
-	public static TSHFrame getFrame() {
+	public static TPHFrame getFrame() {
 		return _frame;
 	}
 
 	public static void main(String[] args) throws NativeHookException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 		GlobalScreen.registerNativeHook(); // Enable native key events
+
+		_preferences = Preferences.fromFile();
 
 		_isLoggedIn = Token.fileExists();
 		initDeviceUtil();
@@ -52,7 +64,7 @@ public class Application {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		UIManager.put("ToolTip.background", new ColorUIResource(255, 255, 255));
 
-		_frame = new TSHFrame();
+		_frame = new TPHFrame();
 	}
 
 	/**

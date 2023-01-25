@@ -1,7 +1,7 @@
-package mil.tsh.types;
+package mil.tph.types;
 
-import mil.tsh.Application;
-import mil.tsh.util.APIUtil;
+import mil.tph.Application;
+import mil.tph.util.APIUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Switch implements Serializable {
+public class Plug implements Serializable {
 
 	public static final String SAVE_DIRECTORY = System.getProperty("user.dir") + "/data/devices/";
 
@@ -22,7 +22,7 @@ public class Switch implements Serializable {
 	private String _name;
 	private boolean _state;
 
-	public Switch(String id, String name, boolean state) {
+	public Plug(String id, String name, boolean state) {
 		this._id = id;
 		this._name = name;
 		this._state = state;
@@ -40,9 +40,9 @@ public class Switch implements Serializable {
 		Application.getFrame().refresh();
 	}
 
-	private static Switch readFile(File file) {
+	private static Plug readFile(File file) {
 		try {
-			return (Switch) new ObjectInputStream(new FileInputStream(file)).readObject();
+			return (Plug) new ObjectInputStream(new FileInputStream(file)).readObject();
 		} catch (Exception e) {
 			Logger.getGlobal().log(Level.SEVERE, "Failed to read from device file! (" + file.getAbsolutePath() + ")");
 			e.printStackTrace();
@@ -50,8 +50,8 @@ public class Switch implements Serializable {
 		}
 	}
 
-	public static List<Switch> readAllFiles() {
-		List<Switch> devices = new ArrayList<>();
+	public static List<Plug> readAllFiles() {
+		List<Plug> devices = new ArrayList<>();
 		for (File f : Objects.requireNonNull(new File(SAVE_DIRECTORY).listFiles())) {
 			devices.add(readFile(f));
 		}

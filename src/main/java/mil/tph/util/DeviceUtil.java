@@ -1,7 +1,7 @@
-package mil.tsh.util;
+package mil.tph.util;
 
-import mil.tsh.types.Switch;
-import mil.tsh.types.Token;
+import mil.tph.types.Plug;
+import mil.tph.types.Token;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class DeviceUtil {
 
 	public static final int REFRESH_DEVICES_FROM_API_EVERY_MINUTES = 60;
 
-	private final Map<String, Switch> _knownDevices = new HashMap<>(); // Key is ID
+	private final Map<String, Plug> _knownDevices = new HashMap<>(); // Key is ID
 	private Token _token;
 
 	public DeviceUtil(Token token) {
@@ -32,15 +32,15 @@ public class DeviceUtil {
 		_token = token;
 	}
 
-	public Optional<Switch> fromName(String name) {
+	public Optional<Plug> fromName(String name) {
 		return _knownDevices.values().stream().filter(e -> e.getName().equals(name)).findFirst();
 	}
 
-	public Switch getDevice(String id) {
+	public Plug getDevice(String id) {
 		return _knownDevices.get(id);
 	}
 
-	public List<Switch> getKnownDevices() {
+	public List<Plug> getKnownDevices() {
 		return new ArrayList<>(_knownDevices.values());
 	}
 
@@ -50,7 +50,7 @@ public class DeviceUtil {
 
 	/** Writes all known devices to disk, deleting unknown ones. */
 	public void writeFiles() {
-		for (File file : Objects.requireNonNull(new File(Switch.SAVE_DIRECTORY).listFiles())) {
+		for (File file : Objects.requireNonNull(new File(Plug.SAVE_DIRECTORY).listFiles())) {
 			if (!_knownDevices.containsKey(file.getName()))
 				file.delete(); // Delete files of switches that no longer exist
 		}
@@ -66,12 +66,12 @@ public class DeviceUtil {
 
 	/** Updates the list of known devices from the device files saved on disk. */
 	public void updateFromDisk() {
-		Switch.readAllFiles().forEach(d -> _knownDevices.put(d.getId(), d));
+		Plug.readAllFiles().forEach(d -> _knownDevices.put(d.getId(), d));
 	}
 
 	/** Updates the list of known devices from the Tuya API. */
 	public void updateFromAPI() {
-		List<Switch> devices = APIUtil.getDevices(_token);
+		List<Plug> devices = APIUtil.getDevices(_token);
 		if (devices == null) {
 			Logger.getGlobal().log(Level.WARNING, "Invalid device API response! Unable to update devices.");
 			return;

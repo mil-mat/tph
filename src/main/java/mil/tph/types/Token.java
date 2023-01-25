@@ -1,7 +1,7 @@
-package mil.tsh.types;
+package mil.tph.types;
 
-import mil.tsh.Application;
-import mil.tsh.util.APIUtil;
+import mil.tph.Application;
+import mil.tph.util.APIUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -19,10 +19,6 @@ import java.util.logging.Logger;
 public class Token implements Serializable {
 
 	public static final String SAVE_PATH = System.getProperty("user.dir") + "/data/token";
-
-	static {
-		new File(System.getProperty("user.dir") + "/data/").mkdirs();
-	}
 
 	private String _accessToken;
 	private String _refreshToken;

@@ -1,11 +1,12 @@
-package mil.tsh.types;
+package mil.tph.types;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import mil.tsh.Application;
+import mil.tph.Application;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,9 +18,9 @@ public class Hotkey implements Serializable, Cloneable {
 	private Set<Modifier> _modifiers;
 	private int _keyCode;
 
-	private Switch _device;
+	private Plug _device;
 
-	public Hotkey(Switch device, int keyCode, Modifier... modifiers) {
+	public Hotkey(Plug device, int keyCode, Modifier... modifiers) {
 		this._keyCode = keyCode;
 		this._modifiers = new HashSet<>(Arrays.asList(modifiers));
 		this._device = device;
@@ -33,7 +34,7 @@ public class Hotkey implements Serializable, Cloneable {
 		if (_keyCode == KEYCODE_UNBOUND) return "Not Bound";
 
 		StringBuilder builder = new StringBuilder();
-		getModifiers().forEach(m -> builder.append(m.getName()).append(" "));
+		getModifiers().stream().sorted(Comparator.comparingInt(Modifier::getOrder)).forEach(m -> builder.append(m.getName()).append(" "));
 		if (_keyCode != KEYCODE_AWAITING) { // Check if keycode is valid - if it isn't, don't append it.
 			builder.append(NativeKeyEvent.getKeyText(_keyCode));
 		}
@@ -69,12 +70,12 @@ public class Hotkey implements Serializable, Cloneable {
 		Application.getFrame().refresh();
 	}
 
-	public Switch getDevice() {
+	public Plug getDevice() {
 		return _device;
 	}
 
 	/** Sets device and refreshes the GUI. */
-	public void setDevice(Switch device) {
+	public void setDevice(Plug device) {
 		this._device = device;
 		Application.getFrame().refresh();
 	}
